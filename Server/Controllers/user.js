@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
     newUser.password = undefined;
 
     const token = await jwt.sign(
-      { userId: existingUser._id },
+      { userId:  newUser._id },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
