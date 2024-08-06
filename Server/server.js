@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const { connectDB } = require("./Utils/Database/connectDb");
 const userRouter = require("./Routes/user")
 const categoryRouter = require("./Routes/category")
+const blogRouter = require("./Routes/blog")
+const commentRouter = require("./Routes/comment")
+const rateLimit = require("express-rate-limit")
 
 dotenv.config();
 
@@ -12,9 +15,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const limit = rateLimit({
+  windowMs : 1000 * 60 * 5,
+  max : 3,
+  message : "Too many requests, Please try after some time"
+})
+
 app.use("/api/v1/user",userRouter)
 app.use("/api/v1/category",categoryRouter)
+app.use("/api/v1/blog",limit, blogRouter)
+app.use("/api/v1/comment",commentRouter)
 
+app.use("*", (req,res)=>{
+  res.status(404).json({message:"404 Page not found"})
+})
 // connect Database
 connectDB(process.env.MONGODB_URL);
 
