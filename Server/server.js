@@ -17,8 +17,10 @@ app.use(express.json());
 
 const limit = rateLimit({
   windowMs : 1000 * 60 * 5,
-  max : 3,
-  message : "Too many requests, Please try after some time"
+  max : 118,
+  handler: (req, res) => {
+    res.status(429).json({ message: "Too many requests, please try again later." });
+  }
 })
 
 app.use("/api/v1/user",userRouter)

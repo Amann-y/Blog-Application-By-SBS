@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
     newUser.password = undefined;
 
     const token = await jwt.sign(
-      { userId:  newUser._id },
+      { userId: newUser._id },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
@@ -38,6 +38,9 @@ const registerUser = async (req, res) => {
       message: "User registered successfully",
       newUser,
       token,
+      userId: newUser._id,
+      userName: newUser.fullName,
+      userEmail: newUser.email,
     });
   } catch (error) {
     console.log(error);
@@ -79,7 +82,14 @@ const loginUser = async (req, res) => {
       );
       res
         .status(200)
-        .json({ success: true, message: "User login successfully", token });
+        .json({
+          success: true,
+          message: "User login successfully",
+          token,
+          userId: existingUser._id,
+          userName: existingUser.fullName,
+          userEmail: existingUser.email,
+        });
     }
   } catch (error) {
     console.log(error);
@@ -87,4 +97,52 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const loggedUserController = async (req, res) => {
+  try {
+    res.status(200).json({ user: req.user, success: true });
+  } catch (error) {
+    // console.log(error);
+    res.status(400).json({ success: false, message: "Internal server error" });
+  }
+};
+
+const changeUserPassword = async (req, res) => {
+  try {
+    const { password, password_confirmation } = req.body;
+    if (!password || !password_confirmation) {
+      return res.send({ status: "failed", message: "All Fields Are Required" });
+    } else {
+      if (password === password_confirmation) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await UserModel.findByIdAndUpdate(req.user._id, {
+          $set: { password: hashedPassword },
+        });
+        return res.send({
+          success: true,
+          message: "Password Changed Successfully",
+        });
+      } else {
+        return res.send({
+          success: false,
+          message: "Credentials Don't Match",
+        });
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, message: "Internal server error" });
+  }
+};
+
+const deleteUser = async (req,res)=>{
+  try {
+    const { _id } = req.user;
+    await UserModel.findByIdAndDelete(_id);
+    res.status(200).json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    // console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+
+module.exports = { registerUser, loginUser,loggedUserController,changeUserPassword,deleteUser };
