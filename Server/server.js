@@ -31,6 +31,12 @@ app.use("/api/v1/comment",commentRouter)
 app.use("*", (req,res)=>{
   res.status(404).json({message:"404 Page not found"})
 })
+
+// General Error Handling Middleware
+app.use((err, req, res, next) => {
+  res.status(500).json({ message: "Something went wrong!" });
+});
+
 // connect Database
 connectDB(process.env.MONGODB_URL);
 

@@ -31,7 +31,7 @@ const BlogCard = ({
 
   return (
     <div
-      className="shadow-lg rounded border-2 pb-2 dark:hover:bg-slate-500 hover:bg-zinc-300 cursor-pointer flex flex-col justify-between gap-2"
+      className="shadow-lg mx-1 rounded border-2 pb-2 dark:hover:bg-slate-500 hover:bg-zinc-300 cursor-pointer flex flex-col justify-between gap-2"
       onClick={() => navigate("/single-blog", { state: blogData })}
     >
       <img

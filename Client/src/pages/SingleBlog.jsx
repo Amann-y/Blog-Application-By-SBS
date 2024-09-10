@@ -101,7 +101,7 @@ const SingleBlog = () => {
           className="object-contain w-full h-auto max-h-96 rounded shadow-md"
         />
       </div>
-      <div className=" rounded px-1">
+      <div className=" rounded px-1 mx-1">
         <h2 className="text-center text-xl md:text-2xl drop-shadow animate__animated animate__flipInX animate__slower">{title}</h2>
         <p className="text-justify dark:text-white/70 text-slate-700">{description}</p>
       </div>
@@ -110,7 +110,7 @@ const SingleBlog = () => {
         <p>Email : {emailOfCreator}</p>
       </div>
 
-      <div>
+      <div className="mx-1">
        {
         token && <div className="my-1 py-2 px-2 bg-zinc-300 container mx-auto shadow-md rounded">
          <form className="grid grid-cols-1 md:grid-cols-3 gap-2" onSubmit={handleSubmit}>
@@ -120,7 +120,7 @@ const SingleBlog = () => {
         </div>
        }
       </div>
-      <div>
+      <div className="mx-1">
         {
             comments.length>0 && <div className="flex items-center justify-center py-1 gap-1 text-xl md:text-2xl border-b-2">
               <p>Users Comments </p><FaLongArrowAltDown /></div>

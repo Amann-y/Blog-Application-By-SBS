@@ -64,9 +64,9 @@ const UpdateBlog = () => {
   };
 
   return (
-    <div className="flex justify-center items-center my-2">
-      <div className="w-full max-w-xl p-4 bg-white rounded-lg shadow-lg">
-        <h2 className="text-xl md:text-2xl font-bold md:mb-6 text-center animate-bounce">
+    <div className="flex justify-center items-center my-2 mx-1">
+      <div className="w-full max-w-xl p-4 bg-slate-300 rounded-lg mb-2 shadow-lg">
+        <h2 className="text-xl md:text-2xl font-bold md:mb-6 text-center animate-bounce dark:text-black">
           {location?.pathname === "/update-blog" ? "Update A Blog" : ""}
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -82,7 +82,7 @@ const UpdateBlog = () => {
               id="title"
               name="title"
               value={data.title}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-black"
               onChange={handleChange}
             />
           </div>
@@ -99,7 +99,7 @@ const UpdateBlog = () => {
               id="categoryTitle"
               name="categoryTitle"
               value={data.categoryTitle}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-black"
               onChange={handleChange}
             />
           </div>
@@ -116,7 +116,7 @@ const UpdateBlog = () => {
               id="imgUrl"
               name="imgUrl"
               value={data.imgUrl}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-black"
               onChange={handleChange}
             />
           </div>
@@ -133,7 +133,7 @@ const UpdateBlog = () => {
               name="description"
               rows={5}
               value={data.description}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-black"
               onChange={handleChange}
             ></textarea>
           </div>

@@ -69,7 +69,7 @@ const CreateBlog = () => {
 
   return (
     <div className="flex justify-center items-center my-2">
-      <div className="w-full max-w-xl p-4 bg-white rounded-lg shadow-lg">
+      <div className="w-full max-w-xl p-4 bg-slate-200 rounded-lg shadow-lg">
         <h2 className="text-xl dark:text-black md:text-2xl font-bold md:mb-6 text-center animate-bounce">
           {location?.pathname === "/create-blog"
             ? "Create A Blog"

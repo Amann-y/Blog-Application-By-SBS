@@ -1,1 +1,23 @@
+/* The scrollbar itself */
+::-webkit-scrollbar {
+  width: 12px; /* width of the scrollbar */
+  height: 12px; /* height of the scrollbar */
+}
+
+/* The draggable part of the scrollbar */
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* color of the scrollbar thumb */
+  border-radius: 6px; /* rounded corners */
+}
+
+/* The track (part the thumb slides along) */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* color of the track */
+  border-radius: 6px; /* rounded corners */
+}
+
+/* The buttons on the scrollbar (if present) */
+::-webkit-scrollbar-button {
+  background-color: #ddd; /* color of the buttons */
+}
 
