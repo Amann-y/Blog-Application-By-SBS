@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppProvider } from "./context/useUserContext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import 'animate.css';
 
 const queryClient = new QueryClient();
 

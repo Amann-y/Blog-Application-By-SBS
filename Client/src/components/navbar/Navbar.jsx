@@ -34,7 +34,7 @@ const Navbar = () => {
                 <img
                   src={Logo}
                   alt="Logo"
-                  className="w-12 h-auto rounded animate__animated animate__slow animate__pulse animate__infinite	infinite"
+                  className="w-12 h-auto rounded animate__animated animate__slow animate__pulse animate__infinite	"
                 />
               </Link>
             </div>
