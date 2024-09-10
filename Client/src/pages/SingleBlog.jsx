@@ -114,7 +114,7 @@ const SingleBlog = () => {
        {
         token && <div className="my-1 py-2 px-2 bg-zinc-300 container mx-auto shadow-md rounded">
          <form className="grid grid-cols-1 md:grid-cols-3 gap-2" onSubmit={handleSubmit}>
-         <input placeholder="Write Comment" type="text" required ref={ userComment } className="col-span-2 px-2 py-1 rounded outline-none"/>
+         <input placeholder="Write Comment" type="text" required ref={ userComment } className="col-span-2 px-2 py-1 rounded outline-none dark:text-black"/>
          <button type="submit" className="col-span-1 dark:text-black bg-green-300 rounded-md py-1 px-2 font-semibold hover:bg-green-400">Comment</button>
          </form>
         </div>
