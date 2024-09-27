@@ -148,12 +148,10 @@ const updateUserSpecificBlog = async (req, res) => {
         res.status(404).json({ success: false, message: "Blog not found" });
       }
     } else {
-      res
-        .status(403)
-        .json({
-          success: false,
-          message: "User is not authorized to update this blog",
-        });
+      res.status(403).json({
+        success: false,
+        message: "User is not authorized to update this blog",
+      });
     }
   } catch (error) {
     // console.error(error)
@@ -178,6 +176,71 @@ const getBlogByCategory = async (req, res) => {
   }
 };
 
+const likeABlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { _id } = req.user;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid blog ID" });
+    }
+
+    // Find the blog to like it
+    const userBlog = await BlogModel.findOne({ _id: id });
+
+    if (!userBlog?.likes?.includes(_id)) {
+      const result = await BlogModel.findByIdAndUpdate(id, {
+        $push: {
+          likes: _id,
+        },
+      },{new:true});
+
+      if (result) {
+        res.status(201).json({ success: true, message: "Blog has been Liked", likes:result});
+      }
+    } else {
+      const result = await BlogModel.findByIdAndUpdate(id, {
+        $pull: {
+          likes: _id,
+        },
+      },{new:true});
+      
+      if (result) {
+        res
+          .status(201)
+          .json({ success: true, message: "Blog has been DisLiked", likes:result});
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getAllLikes = async (req, res) => {
+  const { postId } = req.params; // Assuming you pass postId in the route parameters
+
+  try {
+    const blogPost = await BlogModel.findById(postId).populate(
+      "likes",
+      "nameOfCreator emailOfCreator"
+    );
+
+    if (!blogPost) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog post not found" });
+    }
+
+    const likesResponse = blogPost.likes;
+
+    res.status(200).json({ success: true, likes: likesResponse });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createBlog,
   getAllBlog,
@@ -185,4 +248,6 @@ module.exports = {
   deleteUserSpecificBlog,
   updateUserSpecificBlog,
   getBlogByCategory,
+  likeABlog,
+  getAllLikes,
 };

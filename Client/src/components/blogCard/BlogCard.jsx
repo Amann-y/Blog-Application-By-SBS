@@ -16,6 +16,7 @@ const BlogCard = ({
     title,
     nameOfCreator,
     createdAt,
+    likes
   } = blogData;
 
   const navigate = useNavigate();

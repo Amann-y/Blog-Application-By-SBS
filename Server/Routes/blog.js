@@ -6,7 +6,9 @@ const {
   getUserSpecificBlog,
   deleteUserSpecificBlog,
   updateUserSpecificBlog,
-  getBlogByCategory
+  getBlogByCategory,
+  likeABlog,
+  getAllLikes
 } = require("../Controllers/blog");
 
 const router = express.Router();
@@ -15,7 +17,9 @@ router.post("/create-blog", checkUserAuth, createBlog);
 router.get("/blogs", getAllBlog);
 router.get("/user-blog", checkUserAuth, getUserSpecificBlog);
 router.delete("/user-blog/:id", checkUserAuth, deleteUserSpecificBlog);
+router.post("/user-blog/like/:id", checkUserAuth, likeABlog);
 router.put("/user-blog/:id", checkUserAuth, updateUserSpecificBlog);
-router.get("/blogs/:category", getBlogByCategory)
+router.get("/blogs/:category", getBlogByCategory, likeABlog);
+router.get("/blog-likes/:postId", checkUserAuth,getAllLikes)
 
 module.exports = router;
