@@ -6,11 +6,12 @@ import { toast } from "react-toastify";
 import UserComments from "../components/userComments/UserComments";
 import { useRef } from "react";
 import "animate.css";
+import { useGlobalContext } from "../context/useUserContext";
 
 const SingleBlog = () => {
   const [comments, setComments] = useState([]);
-  const [like, setLike] = useState([])
-  const [likeFlag, setLikeFlag] = useState(false)
+  const [like, setLike] = useState([]);
+  const [likeFlag, setLikeFlag] = useState(false);
   const {
     state: {
       imgUrl,
@@ -27,6 +28,8 @@ const SingleBlog = () => {
   const token = localStorage.getItem("Blog-Token");
 
   const userComment = useRef(null);
+
+  const { userId } = useGlobalContext();
 
   const fetchComments = async () => {
     try {
@@ -103,20 +106,18 @@ const SingleBlog = () => {
           },
         }
       );
-  
+     
       if (response?.data?.success) {
         setLike(response?.data?.likes?.likes);
+        setLikeFlag(response.data.likes.likes.some(ele=>ele==userId));
         toast.success(response?.data?.message);
-      }
-      else if(response?.data?.success=="Blog has been DisLiked"){
-        setLike([]);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
   };
 
-  const getLikes = async ()=>{
+  const getLikes = async () => {
     try {
       const response = await axios.get(
         `http://localhost:5500/api/v1/blog/blog-likes/${_id}`,
@@ -127,19 +128,20 @@ const SingleBlog = () => {
           },
         }
       );
-  
+     
       if (response?.data?.success) {
         setLike(response?.data?.likes);
+        setLikeFlag(response.data.likes.some(ele=>ele._id==userId));
         toast.success(response?.data?.message);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
-  }
-  
+  };
+
   useEffect(() => {
     fetchComments();
-    getLikes()
+    getLikes();
   }, []);
 
   return (
@@ -160,8 +162,15 @@ const SingleBlog = () => {
         </p>
       </div>
       <div className="rounded px-2 py-1 md:px-1 flex items-center flex-wrap justify-between mt-1 font-semibold shadow-md animate__animated animate__fadeInRight animate__slower">
-        <div className="cursor-pointer" onClick={likeHandler}>
-        <i style={{fontSize:"24px"}} className={`fa ${like.length>0 && "text-red-400"} `}>&#xf087;</i>
+        <div className="cursor-pointer flex flex-col" onClick={likeHandler}>
+          <i
+            className={`fa ${
+              likeFlag && "text-red-400"
+            } text-2xl md:text-3xl`}
+          >
+            &#xf087;
+          </i>
+          <p>{like?.length > 0 && like?.length}</p>
         </div>
         <div className="flex flex-col">
           <p>CreatedBy : {nameOfCreator}</p>
