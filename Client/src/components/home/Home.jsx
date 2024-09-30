@@ -1,37 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useTanstackQuery from "../../utils/useTanstackQuery";
 import BlogCard from "../blogCard/BlogCard";
 import SimmerCard from "../SimmerCard/SimmerCard";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-const ITEMS_PER_PAGE = 6; // Number of items per page
+const ITEMS_PER_PAGE = 3; // Number of items per page
 
 const Home = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [expandedItems, setExpandedItems] = useState({});
+  const [hasMore, setHasMore] = useState(true);
+  const [currentBlogs, setCurrentBlogs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { isPending: loading, isError: error, data } = useTanstackQuery("http://localhost:5500/api/v1/blog/blogs");
+  const { isPending: loading, isError, error, data } = useTanstackQuery("http://localhost:5500/api/v1/blog/blogs");
   
   const blogs = data?.data?.blogs || []; // Safely access blogs
 
-  // Calculate the total number of pages
-  const totalPages = Math.max(Math.ceil(blogs.length / ITEMS_PER_PAGE), 1); // Ensure at least 1 page
+  useEffect(() => {
+    if (blogs.length > 0) {
+      loadMoreBlogs(); // Load initial blogs
+    }
+  }, [blogs]);
 
-  // Slice the blogs array based on the current page
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentBlogs = blogs.slice(startIndex, endIndex);
-
-  const handlePageChange = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
+  const loadMoreBlogs = () => {
+    const nextBlogs = blogs.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+    
+    if (nextBlogs.length > 0) {
+      setCurrentBlogs((prev) => [...prev, ...nextBlogs]);
+      setCurrentPage((prev) => prev + 1);
+    } else {
+      setHasMore(false); // No more blogs to load
     }
   };
 
-  if (error) {
+  if (isError) {
     return (
       <div>
         <h1 className="text-center my-2 text-2xl text-red-500 font-semibold">
-          Internal Server Error, Try Again
+          Error: {error?.message || "An unknown error occurred"}
         </h1>
       </div>
     );
@@ -42,7 +48,13 @@ const Home = () => {
       {loading ? (
         <SimmerCard />
       ) : (
-        <>
+        <InfiniteScroll
+          dataLength={currentBlogs.length}
+          next={loadMoreBlogs}
+          hasMore={hasMore}
+          loader={<h4 className="text-center text-xl">Loading...</h4>}
+          endMessage={<p style={{ textAlign: 'center' }}><b>You have seen it all!</b></p>}
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 py-2 gap-3 container mx-auto">
             {currentBlogs.map((blogData, index) => {
               const isMore = expandedItems[index];
@@ -59,32 +71,14 @@ const Home = () => {
               );
             })}
           </div>
-          <div className="flex justify-center my-4">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 mx-2 rounded ${currentPage === 1 ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-700 via-purple-600 to-pink-400 text-white'}`}
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 mx-2">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 mx-2 rounded ${currentPage === totalPages ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-700 via-purple-600 to-pink-400 text-white'}`}
-            >
-              Next
-            </button>
-          </div>
-        </>
+        </InfiniteScroll>
       )}
     </section>
   );
 };
 
 export default Home;
+
 
 
 
