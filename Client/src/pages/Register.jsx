@@ -4,12 +4,15 @@ import { toast } from "react-toastify";
 import { storeToken } from "../utils/storeDataInLocalStorage";
 import { Navigate } from "react-router-dom";
 import { useGlobalContext } from "../context/useUserContext";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
+  const [recaptchaValue, setRecaptchaValue] = useState(null)
   const fName = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const captchaRef = useRef(null);
 
   const token = localStorage.getItem("Blog-Token");
 
@@ -30,6 +33,10 @@ const Register = () => {
       return toast.error("All fields are required");
     }
 
+    if(!recaptchaValue){
+      return toast.error("Please tick reCaptcha");
+    }
+
     setLoading(true); // Set loading state to true before the request
 
     try {
@@ -39,6 +46,7 @@ const Register = () => {
           fullName: fName.current.value,
           email: email.current.value,
           password: password.current.value,
+          recaptchaValue : recaptchaValue
         }
       );
 
@@ -56,6 +64,8 @@ const Register = () => {
         fName.current.value = "";
         email.current.value = "";
         password.current.value = "";
+        captchaRef.current.reset()
+        setRecaptchaValue(null);
         toast.success(response?.data?.message);
       }
     } catch (error) {
@@ -64,6 +74,10 @@ const Register = () => {
       setLoading(false); // Set loading state to false after the request
     }
   };
+
+  const recaptchaHandler = (value)=>{
+    setRecaptchaValue(value)
+  }
 
   return (
     <div className="flex justify-center items-center my-2 mx-1">
@@ -120,6 +134,11 @@ const Register = () => {
               required
             />
           </div>
+
+          <div>
+            <ReCAPTCHA sitekey={import.meta.env.VITE_SITE_KEY} onChange={recaptchaHandler} ref={captchaRef}/>
+          </div>
+
           <div className="flex items-center justify-between">
             <button
               type="submit"

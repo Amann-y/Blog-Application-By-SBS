@@ -1,11 +1,12 @@
 const { UserModel } = require("../Models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 const registerUser = async (req, res) => {
   try {
-    const { fullName, password, email } = req.body;
-    if (!fullName || !password || !email) {
+    const { fullName, password, email, recaptchaValue } = req.body;
+    if (!fullName || !password || !email || !recaptchaValue) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
@@ -17,31 +18,42 @@ const registerUser = async (req, res) => {
         message: "User already registered with this email",
       });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await UserModel.create({
-      fullName,
-      password: hashedPassword,
-      email,
-    });
-
-    newUser.password = undefined;
-
-    const token = await jwt.sign(
-      { userId: newUser._id },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "1d" }
+    const output = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaValue}`
     );
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      newUser,
-      token,
-      userId: newUser._id,
-      userName: newUser.fullName,
-      userEmail: newUser.email,
-    });
+    if (output.data.success) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = await UserModel.create({
+        fullName,
+        password: hashedPassword,
+        email,
+      });
+
+      newUser.password = undefined;
+
+      const token = await jwt.sign(
+        { userId: newUser._id },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1d" }
+      );
+
+      res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        newUser,
+        token,
+        userId: newUser._id,
+        userName: newUser.fullName,
+        userEmail: newUser.email,
+      });
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "reCaptcha verification failed" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: error.message });
@@ -50,8 +62,8 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { password, email } = req.body;
-    if (!password || !email) {
+    const { password, email, recaptchaValue } = req.body;
+    if (!password || !email || !recaptchaValue) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
@@ -75,14 +87,18 @@ const loginUser = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid Credentials" });
     } else {
-      const token = await jwt.sign(
-        { userId: existingUser._id },
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: "1d" }
+      
+      const output = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaValue}`
       );
-      res
-        .status(200)
-        .json({
+
+      if (output.data.success) {
+        const token = await jwt.sign(
+          { userId: existingUser._id },
+          process.env.JWT_SECRET_KEY,
+          { expiresIn: "1d" }
+        );
+        res.status(200).json({
           success: true,
           message: "User login successfully",
           token,
@@ -90,6 +106,11 @@ const loginUser = async (req, res) => {
           userName: existingUser.fullName,
           userEmail: existingUser.email,
         });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "reCaptcha verification failed" });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -134,15 +155,23 @@ const changeUserPassword = async (req, res) => {
   }
 };
 
-const deleteUser = async (req,res)=>{
+const deleteUser = async (req, res) => {
   try {
     const { _id } = req.user;
     await UserModel.findByIdAndDelete(_id);
-    res.status(200).json({ success: true, message: "User deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     // console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
-}
+};
 
-module.exports = { registerUser, loginUser,loggedUserController,changeUserPassword,deleteUser };
+module.exports = {
+  registerUser,
+  loginUser,
+  loggedUserController,
+  changeUserPassword,
+  deleteUser,
+};

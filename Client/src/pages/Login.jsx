@@ -4,15 +4,18 @@ import { toast } from "react-toastify";
 import { storeToken } from "../utils/storeDataInLocalStorage";
 import { Navigate } from "react-router-dom";
 import { useGlobalContext } from "../context/useUserContext";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [recaptchaValue, setRecaptchaValue] = useState(null);
   const email = useRef(null);
   const password = useRef(null);
+  const captchaRef = useRef(null);
 
   const token = localStorage.getItem("Blog-Token");
 
-  const {saveUserData} = useGlobalContext()
+  const { saveUserData } = useGlobalContext();
 
   if (token) {
     return <Navigate to="/" />;
@@ -25,6 +28,10 @@ const Login = () => {
       return toast.error("All fields are required");
     }
 
+    if (!recaptchaValue) {
+      return toast.error("Please tick reCaptcha");
+    }
+
     setLoading(true); // Set loading state to true before the request
 
     try {
@@ -33,17 +40,25 @@ const Login = () => {
         {
           email: email.current.value,
           password: password.current.value,
+          recaptchaValue: recaptchaValue,
         }
       );
 
       if (response?.data?.success) {
-        saveUserData(response?.data?.token,  response?.data?.userName,response?.data?.userEmail, response?.data?.userId)
+        saveUserData(
+          response?.data?.token,
+          response?.data?.userName,
+          response?.data?.userEmail,
+          response?.data?.userId
+        );
         const output = storeToken(response?.data?.token);
         if (output) {
           return toast.error("Provide Access Token");
         }
         email.current.value = "";
         password.current.value = "";
+        captchaRef.current.reset();
+        setRecaptchaValue(null);
         toast.success(response?.data?.message);
       }
     } catch (error) {
@@ -51,6 +66,10 @@ const Login = () => {
     } finally {
       setLoading(false); // Set loading state to false after the request
     }
+  };
+
+  const recaptchaHandler = (value) => {
+    setRecaptchaValue(value);
   };
 
   return (
@@ -92,6 +111,15 @@ const Login = () => {
               required
             />
           </div>
+
+          <div>
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_SITE_KEY}
+              onChange={recaptchaHandler}
+              ref={captchaRef}
+            />
+          </div>
+
           <div className="flex items-center justify-between">
             <button
               type="submit"

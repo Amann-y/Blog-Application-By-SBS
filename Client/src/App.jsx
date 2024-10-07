@@ -19,7 +19,7 @@ const About = React.lazy(() => import('./pages/About'));
 
 const App = () => {
   return (
-    <div className="min-h-[100dvh] grid grid-rows-[auto_1fr_auto] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-[100dvh] grid grid-rows-[auto_1fr_auto] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-w-fit ">
       <Suspense
         fallback={<div className="text-center text-xl min-h-screen">Loading...</div>}
       >
