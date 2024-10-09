@@ -64,7 +64,7 @@ const UserBlogs = () => {
               />
             );
           }) : (
-            <div><h1 className="text-2xl my-2 text-center">No Blog </h1></div>
+            <div><h1 className="text-2xl my-2 text-center">No Blog! </h1></div>
           )}
         </div>
       )}

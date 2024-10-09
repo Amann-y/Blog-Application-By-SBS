@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Text */}
           <div className="mb-6 md:mb-0">
-            <h1 className="text-2xl font-semibold animate__animated animate__slower animate__pulse animate__infinite">Blog-App</h1>
+            <h1 className="text-2xl font-semibold animate__animated animate__slower animate__pulse animate__infinite shadow-md shadow-emerald-500">Blog-<span className="text-orange-400">App</span></h1>
             <p className="mt-2">© 2024 Blog-App. All rights reserved.</p>
           </div>
 
