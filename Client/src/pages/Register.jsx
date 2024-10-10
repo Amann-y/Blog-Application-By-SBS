@@ -70,6 +70,8 @@ const Register = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "An error occurred");
+      captchaRef.current.reset()
+      setRecaptchaValue(null);
     } finally {
       setLoading(false); // Set loading state to false after the request
     }
