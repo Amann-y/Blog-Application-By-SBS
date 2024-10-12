@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import "./App.css"
 
+
 // Lazy-loaded components
 const Navbar = React.lazy(() => import('./components/navbar/Navbar'));
 const Home = React.lazy(() => import('./components/home/Home'));
@@ -16,6 +17,8 @@ const UserInfo = React.lazy(() => import('./pages/UserInfo'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
 const Footer = React.lazy(() => import('./pages/Footer'));
 const About = React.lazy(() => import('./pages/About'));
+const ForgotPassword = React.lazy(()=>import('./pages/ForgotPassword'))
+const ResetPassword = React.lazy(()=>import('./pages/ResetPassword'))
 
 const App = () => {
   return (
@@ -29,6 +32,8 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About/>}/>
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          <Route path="/api/v1/user/reset/:id/:token" element={<ResetPassword/>}/>
 
           <Route element={<PrivatePages />}>
             <Route path="/single-blog" element={<SingleBlog />} />

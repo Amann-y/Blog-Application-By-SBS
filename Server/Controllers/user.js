@@ -204,7 +204,7 @@ const sendUserResetPasswordEmail = async (req,res)=>{
     const link = `http://127.0.0.1:5173/api/v1/user/reset/${user._id}/${token}`
 
     // send email
-    let info = await transport.sendEmail({
+    let info = await transport.sendMail({
       from:process.env.EMAIL_FROM,
       to: user.email,
       subject:"Blog-App, Password Reset Link",
@@ -221,7 +221,7 @@ const sendUserResetPasswordEmail = async (req,res)=>{
     res.status(200).json({success:true, message:"Password Reset Email Sent, Please Check Your Email", info})
 
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({ success: false, message: error.message || "Internal server error" });
   }
 }
 

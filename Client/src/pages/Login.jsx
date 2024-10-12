@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { storeToken } from "../utils/storeDataInLocalStorage";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useGlobalContext } from "../context/useUserContext";
 import ReCAPTCHA from "react-google-recaptcha";
 
@@ -73,7 +73,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center my-2 mx-1">
+    <div className="flex justify-center items-center my-2 mx-2">
       <div className="w-full max-w-md p-4 bg-slate-300 rounded-lg shadow-lg">
         <h2 className="text-xl md:text-2xl font-bold md:mb-6 text-center animate-bounce dark:text-black">
           Login Form
@@ -133,6 +133,14 @@ const Login = () => {
               {loading ? "Logging..." : "Login"}
             </button>
           </div>
+
+          {/* Forgot Password Link */}
+          <div className="text-center mt-4">
+            <Link to="/forgot-password" className="text-blue-600 md:text-xl hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+
         </form>
       </div>
     </div>

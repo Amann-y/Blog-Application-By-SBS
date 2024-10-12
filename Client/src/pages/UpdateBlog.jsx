@@ -64,7 +64,7 @@ const UpdateBlog = () => {
   };
 
   return (
-    <div className="flex justify-center items-center my-2 mx-1">
+    <div className="flex justify-center items-center my-2 mx-2">
       <div className="w-full max-w-xl p-4 bg-slate-300 rounded-lg mb-2 shadow-lg">
         <h2 className="text-xl md:text-2xl font-bold md:mb-6 text-center animate-bounce dark:text-black">
           {location?.pathname === "/update-blog" ? "Update A Blog" : ""}
