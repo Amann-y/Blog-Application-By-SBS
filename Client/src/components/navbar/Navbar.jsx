@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  const { removeUserData, theme, toggleTheme } = useGlobalContext();
+  const {removeUserData, theme, toggleTheme, avatar} = useGlobalContext();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -90,13 +90,15 @@ const Navbar = () => {
                       Create Blog
                     </Link>
 
+                   
                     <Link
                       to="/login"
-                      className="text-black hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                      className="text-black hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center gap-1"
                       onClick={handleLogout}
-                    >
-                      Logout
+                    > 
+                    <img src={avatar} alt="Image" className="w-5 rounded-full" />Logout
                     </Link>
+                    
                   </>
                 )}
 
@@ -208,10 +210,10 @@ const Navbar = () => {
 
               <Link
                 to="/login"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center gap-1"
                 onClick={handleLogout}
               >
-                Logout
+                <img src={avatar} alt="Image" className="w-5 rounded-full" />Logout
               </Link>
             </>
           )}

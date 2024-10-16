@@ -16,7 +16,7 @@ const BlogCard = ({
     title,
     nameOfCreator,
     createdAt,
-    likes
+    likes,
   } = blogData;
 
   const navigate = useNavigate();
@@ -65,7 +65,10 @@ const BlogCard = ({
         <h2>
           Created By : <span className="font-semibold">{nameOfCreator}</span>
         </h2>
-        <p>{istDate}</p>
+        <div className="flex justify-between items-center gap-2 flex-wrap">
+          <p>{istDate}</p>
+          {blogData?.likes.length>0 && blogData?.likes.length} {blogData?.likes.length>1 ? "Likes" : blogData?.likes.length==1 ? "Like": ""}
+        </div>
       </div>
     </div>
   );

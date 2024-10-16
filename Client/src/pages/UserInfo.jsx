@@ -18,7 +18,7 @@ const UserInfo = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("Blog-Token");
 
-  const { removeUserData } = useGlobalContext();
+  const { removeUserData,avatar } = useGlobalContext();
 
   const handleUpdate = useCallback(async () => {
     if (password.trim() !== passwordConfirmation.trim()) {
@@ -85,7 +85,7 @@ const UserInfo = () => {
     <section className="my-2 px-2 md:py-5 container mx-auto flex flex-col md:flex-row gap-2 py-2">
       <div className="basis-1/2 shadow-md rounded flex justify-center sm:justify-between gap-2 flex-wrap items-center text-xl md:text-2xl py-3 md:py-0">
         <img
-          src="https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
+          src={avatar ? avatar : "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"}
           alt="profile-image"
         />
         <div className="px-4 animate__animated animate__backInDown animate__slower mb-2 lg:mb-0">
@@ -94,7 +94,7 @@ const UserInfo = () => {
       </div>
 
       <div className="basis-1/2 flex flex-col items-center shadow-md rounded gap-3 py-3">
-        <h1 className="text-xl md:text-2xl"> User Detail</h1>
+        <h1 className="text-xl md:text-2xl lg:text-3xl bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text"> User Detail</h1>
         <h2>Email : {userEmail}</h2>
         <div className="flex justify-between flex-wrap items-center gap-5">
           <button

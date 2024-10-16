@@ -2,7 +2,16 @@ import { useContext, createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const AppContext = createContext(null);
+const AppContext = createContext({
+  saveUserData: () => {},
+  removeUserData: () => {},
+  userId: null,
+  userEmail: null,
+  userName: null,
+  theme: 'light',
+  toggleTheme: () => {},
+  avatar: null,
+});
 
 const AppProvider = ({ children }) => {
   const [token, setToken] = useState(
@@ -11,6 +20,7 @@ const AppProvider = ({ children }) => {
   const [userEmail, setUserEmail] = useState(null);
   const [userName, setUserName] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [avatar, setAvatar] = useState(null)
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   // Effect to fetch user data if token exists
@@ -18,7 +28,7 @@ const AppProvider = ({ children }) => {
     const fetchUserData = async () => {
       if (token) {
         try {
-          // Replace with your API endpoint to get user data
+          
           const response = await axios.get(
             "http://localhost:5500/api/v1/user/logged-user",
             {
@@ -27,6 +37,15 @@ const AppProvider = ({ children }) => {
               },
             }
           );
+
+          const name = (response?.data?.user?.fullName.includes(" ")) ? response?.data?.user?.fullName : response?.data?.user?.fullName[0]
+
+          if(response?.data?.user?.fullName){
+            const encodedName = encodeURIComponent(name);
+            const output = await axios.get(`https://ui-avatars.com/api/?uppercase=false&name=${encodedName}&color=ff0000&bold=true&size=150&background=random`);
+           
+            setAvatar(output.request.responseURL);
+          }
           
           setUserEmail(response?.data?.user?.email || null);
           setUserName(response?.data?.user?.fullName || null);
@@ -73,7 +92,7 @@ const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ saveUserData, removeUserData, userId, userEmail, userName, theme, toggleTheme }}
+      value={{ saveUserData, removeUserData, userId, userEmail, userName, theme, toggleTheme,avatar }}
     >
       {children}
     </AppContext.Provider>

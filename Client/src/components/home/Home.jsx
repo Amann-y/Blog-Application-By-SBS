@@ -82,6 +82,7 @@ const Home = () => {
           {currentBlogs.map((blogData) => {
             const isMore = expandedItems[blogData._id];
             const trimDescription = blogData?.description.substring(0, 120) + "...";
+          
             return (
               <BlogCard
                 key={blogData._id} // Use a unique key
