@@ -71,6 +71,7 @@ const UserInfo = () => {
         toast.success(response?.data?.message);
         removeUserData();
         localStorage.removeItem("Blog-Token");
+        localStorage.removeItem("isAuth");
         navigate("/login");
       }
     } catch (error) {

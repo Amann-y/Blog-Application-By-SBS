@@ -6,7 +6,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        secondaryFont :["Lilita One", "sans-serif"],
+        paraFont : ["Baskervville", "serif"]
+      }
+    },
   },
   plugins: [],
 }

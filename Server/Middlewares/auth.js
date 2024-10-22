@@ -18,7 +18,7 @@ const checkUserAuth = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(401).send({ status: "failed", message: "Unauthorized User" });
+    res.status(401).send({ status: "failed", message: "Unauthorized User, Session Might Be Expired, Login Again" });
   }
 
   if (!token) {

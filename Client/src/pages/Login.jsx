@@ -14,10 +14,11 @@ const Login = () => {
   const captchaRef = useRef(null);
 
   const token = localStorage.getItem("Blog-Token");
+  const isAuth = localStorage.getItem("isAuth")
 
   const { saveUserData } = useGlobalContext();
 
-  if (token) {
+  if (token && isAuth) {
     return <Navigate to="/" />;
   }
 
@@ -51,7 +52,7 @@ const Login = () => {
           response?.data?.userEmail,
           response?.data?.userId
         );
-        const output = storeToken(response?.data?.token);
+        const output = storeToken(response?.data?.token, response?.data?.isAuth);
         if (output) {
           return toast.error("Provide Access Token");
         }

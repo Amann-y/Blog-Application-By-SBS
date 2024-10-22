@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const token = localStorage.getItem("Blog-Token");
+  const isAuth = localStorage.getItem("isAuth")
 
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ const Navbar = () => {
   const handleLogout = () => {
     removeUserData();
     localStorage.removeItem("Blog-Token");
+    localStorage.removeItem("isAuth");
     navigate("/");
   };
 
@@ -54,7 +56,7 @@ const Navbar = () => {
                   About
                 </Link>
 
-                {!token ? (
+                {!token || !isAuth ? (
                   <>
                     <Link
                       to="/login"
@@ -96,7 +98,7 @@ const Navbar = () => {
                       className="text-black hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center gap-1"
                       onClick={handleLogout}
                     > 
-                    <img src={avatar} alt="Image" className="w-5 rounded-full" />Logout
+                    {avatar && <img src={avatar} alt="Image" className="w-5 rounded-full" />}Logout
                     </Link>
                     
                   </>
@@ -171,7 +173,7 @@ const Navbar = () => {
             About
           </Link>
 
-          {!token ? (
+          {!token || !isAuth ? (
             <>
               <Link
                 to="/login"
@@ -213,7 +215,7 @@ const Navbar = () => {
                 className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center gap-1"
                 onClick={handleLogout}
               >
-                <img src={avatar} alt="Image" className="w-5 rounded-full" />Logout
+               {avatar &&  <img src={avatar} alt="Image" className="w-5 rounded-full" />}Logout
               </Link>
             </>
           )}

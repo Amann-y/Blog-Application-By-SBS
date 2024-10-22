@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { storeToken } from "../utils/storeDataInLocalStorage";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/useUserContext";
 import ReCAPTCHA from "react-google-recaptcha";
 
@@ -15,10 +15,13 @@ const Register = () => {
   const captchaRef = useRef(null);
 
   const token = localStorage.getItem("Blog-Token");
+  const isAuth = localStorage.getItem("isAuth")
 
   const { saveUserData } = useGlobalContext();
 
-  if (token) {
+  const navigate = useNavigate()
+
+  if (token && isAuth) {
     return <Navigate to="/" />;
   }
 
@@ -52,21 +55,20 @@ const Register = () => {
 
       if (response.data.success) {
         saveUserData(
-          response?.data?.token,
+          response?.data?.token || null,
           response?.data?.userName,
           response?.data?.userEmail,
           response?.data?.userId
         );
-        const output = storeToken(response?.data?.token);
-        if (output) {
-          return toast.error("Provide Access Token");
-        }
+        const output = storeToken(response?.data?.token || null);
+      
         fName.current.value = "";
         email.current.value = "";
         password.current.value = "";
         captchaRef.current.reset()
         setRecaptchaValue(null);
         toast.success(response?.data?.message);
+        navigate("/account/verify-email")
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "An error occurred");

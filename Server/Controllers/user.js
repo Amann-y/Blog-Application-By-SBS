@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const { transport } = require("../Config/emailConfig");
+const {sendEmailVerificationOTP} = require("../Utils/sendEmailVerificationOTP");
+const { EmailVerificationModel } = require("../Models/emailVerification");
 
 const registerUser = async (req, res) => {
   try {
@@ -46,19 +48,20 @@ const registerUser = async (req, res) => {
         email,
       });
 
+      sendEmailVerificationOTP(newUser)
+
       newUser.password = undefined;
 
-      const token = await jwt.sign(
-        { userId: newUser._id },
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: "1d" }
-      );
+      // const token = await jwt.sign(
+      //   { userId: newUser._id },
+      //   process.env.JWT_SECRET_KEY,
+      //   { expiresIn: "1d" }
+      // );
 
       res.status(201).json({
         success: true,
-        message: "User registered successfully",
+        message: "User registered successfully, Please Verify Your Account Now",
         newUser,
-        token,
         userId: newUser._id,
         userName: newUser.fullName,
         userEmail: newUser.email,
@@ -75,10 +78,72 @@ const registerUser = async (req, res) => {
         message: error.message,
       });
     }
-    console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
   }
 };
+
+const verifyEmail = async (req,res)=>{
+  try {
+    const {email, otp} = req.body
+
+    
+    if (!email || !otp) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    const existingUser = await UserModel.findOne({ email });
+
+    if (!existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email doesn't exist",
+      });
+    }
+
+    // check if email is already verified
+    if(existingUser.isVerified){
+      return res.status(400).json({
+        success: false,
+        message: "Email is already verified",
+      });
+    }
+   
+    // check if there is a matching email verification otp
+    const emailVerification = await EmailVerificationModel.findOne({userId: existingUser._id,otp})
+
+    if(!emailVerification){
+      if(!existingUser.isVerified){
+        await sendEmailVerificationOTP(existingUser)
+        return res.status(400).json({success:false, message:"Invalid OTP, New OTP has been sent to your email"})
+      }
+      return res.status(400).json({success:false, message:"Invalid OTP"})
+    }
+
+    const currentTime = new Date()
+
+    // 15*60*1000 calculates the expiration time in milliseconds (15 minutes)
+    const expirationTime = new Date(emailVerification.createdAt.getTime()+ 15*60*1000)
+
+    if(currentTime > expirationTime){
+      await sendEmailVerificationOTP(existingUser)
+      return res.status(400).json({success:false, message:"OTP expired, New OTP has been sent to your email"})
+    }
+
+    // OTP is valid and not expired, mark email as verified
+    existingUser.isVerified = true,
+    await existingUser.save()
+
+    // delete email verification document
+    await EmailVerificationModel.deleteMany({userId: existingUser._id})
+
+    return res.status(200).json({ success: true, message: "Email verified successfully" });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+}
+}
 
 const loginUser = async (req, res) => {
   try {
@@ -94,6 +159,13 @@ const loginUser = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User not found",
+      });
+    }
+
+    if(!existingUser.isVerified){
+      return res.status(401).json({
+        success: false,
+        message: "Your account is not verified",
       });
     }
 
@@ -124,6 +196,7 @@ const loginUser = async (req, res) => {
           userId: existingUser._id,
           userName: existingUser.fullName,
           userEmail: existingUser.email,
+          isAuth:true
         });
       } else {
         return res
@@ -266,6 +339,7 @@ const userPasswordReset = async (req,res)=>{
 
 module.exports = {
   registerUser,
+  verifyEmail,
   loginUser,
   loggedUserController,
   changeUserPassword,

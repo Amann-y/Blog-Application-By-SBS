@@ -51,7 +51,7 @@ const AppProvider = ({ children }) => {
           setUserName(response?.data?.user?.fullName || null);
           setUserId(response?.data?.user?._id || null);
         } catch (error) {
-          toast.error("Failed to fetch user data");
+          // toast.error("Failed to fetch user data");
         }
       } else {
         setUserEmail(null);
@@ -73,8 +73,7 @@ const AppProvider = ({ children }) => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const saveUserData = (token, username, useremail, userid) => {
- 
+  const saveUserData = (token="", username, useremail, userid) => {
     setToken(token);
     setUserEmail(useremail);
     setUserName(username);
@@ -87,7 +86,8 @@ const AppProvider = ({ children }) => {
     setUserEmail(null);
     setUserName(null);
     setUserId(null);
-    localStorage.removeItem("Blog-Token"); // Remove token from localStorage
+    localStorage.removeItem("Blog-Token");
+    localStorage.removeItem("isAuth"); 
   };
 
   return (

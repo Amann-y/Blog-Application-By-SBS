@@ -7,8 +7,8 @@ const About = () => {
       <div className="container mx-auto">
         {/* Introduction Section */}
         <section className="bg-white p-8 rounded-lg shadow-lg mb-8 animate__animated animate__fadeIn animate__faster">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text mb-4">About Us</h1>
-          <p className="text-gray-700 text-lg">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text mb-4 font-secondaryFont">About Us</h1>
+          <p className="text-gray-700 text-lg font-paraFont">
             Welcome to our blog! Our mission is to share insightful articles and
             updates on various topics to keep you informed and engaged. We
             strive to provide high-quality content that adds value to our
