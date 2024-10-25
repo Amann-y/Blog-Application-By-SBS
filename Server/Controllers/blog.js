@@ -1,5 +1,6 @@
 const { BlogModel } = require("../Models/blog");
 const mongoose = require("mongoose"); // Make sure mongoose is required
+const { UserModel } = require("../Models/user");
 
 const createBlog = async (req, res) => {
   const { title, imgUrl, description, categoryTitle } = req.body;
@@ -191,26 +192,40 @@ const likeABlog = async (req, res) => {
     const userBlog = await BlogModel.findOne({ _id: id });
 
     if (!userBlog?.likes?.includes(_id)) {
-      const result = await BlogModel.findByIdAndUpdate(id, {
-        $push: {
-          likes: _id,
+      const result = await BlogModel.findByIdAndUpdate(
+        id,
+        {
+          $push: {
+            likes: _id,
+          },
         },
-      },{new:true});
+        { new: true }
+      );
 
       if (result) {
-        res.status(201).json({ success: true, message: "Blog has been Liked", likes:result});
+        res.status(201).json({
+          success: true,
+          message: "Blog has been Liked",
+          likes: result,
+        });
       }
     } else {
-      const result = await BlogModel.findByIdAndUpdate(id, {
-        $pull: {
-          likes: _id,
+      const result = await BlogModel.findByIdAndUpdate(
+        id,
+        {
+          $pull: {
+            likes: _id,
+          },
         },
-      },{new:true});
-      
+        { new: true }
+      );
+
       if (result) {
-        res
-          .status(201)
-          .json({ success: true, message: "Blog has been DisLiked", likes:result});
+        res.status(201).json({
+          success: true,
+          message: "Blog has been DisLiked",
+          likes: result,
+        });
       }
     }
   } catch (error) {
@@ -241,6 +256,36 @@ const getAllLikes = async (req, res) => {
   }
 };
 
+const view = async (req, res) => {
+  try {
+    const { blogId } = req.params;
+    const { _id } = req.user;
+
+    if (!mongoose.Types.ObjectId.isValid(blogId)) {
+      return res.status(400).json({ success: false, message: "Invalid blog ID" });
+    }
+
+    const userBlog = await BlogModel.findOne({ _id: blogId });
+    const loginUser = await UserModel.findById(_id);
+
+    if (!userBlog) {
+      return res.status(404).json({ success: false, message: "Blog not found" });
+    }
+
+    if (loginUser.isVerified) {
+      userBlog.views += 1;
+      await userBlog.save();
+      return res.status(200).json({ success: true, message: null });
+    } else {
+      return res.status(403).json({ success: false, message: "User is not verified" });
+    }
+  } catch (error) {
+    console.error("Error in view controller:", error); // Add this line
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 module.exports = {
   createBlog,
   getAllBlog,
@@ -250,4 +295,5 @@ module.exports = {
   getBlogByCategory,
   likeABlog,
   getAllLikes,
+  view,
 };

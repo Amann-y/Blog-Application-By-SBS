@@ -1,4 +1,5 @@
 import React from "react";
+import { FaRegEye } from "react-icons/fa";
 import { convertUTCToIST } from "../../utils/convertUTCToIST";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +18,10 @@ const BlogCard = ({
     nameOfCreator,
     createdAt,
     likes,
+    views
   } = blogData;
+
+
 
   const navigate = useNavigate();
 
@@ -68,6 +72,11 @@ const BlogCard = ({
         <div className="flex justify-between items-center gap-2 flex-wrap">
           <p>{istDate}</p>
           {blogData?.likes.length>0 && blogData?.likes.length} {blogData?.likes.length>1 ? "Likes" : blogData?.likes.length==1 ? "Like": ""}
+          {
+            <div className="flex items-center gap-1 flex-wrap">
+            <FaRegEye /> <p className="text-black dark:text-white">{views}</p>
+            </div>
+          }
         </div>
       </div>
     </div>

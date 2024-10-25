@@ -139,10 +139,35 @@ const SingleBlog = () => {
     }
   };
 
+  const viewsCount = async () => {
+    try {
+      const response = await axios.put(`http://localhost:5500/api/v1/blog/blog/views/${_id}`,{}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      // console.error("Error updating view count:", error);
+      // toast.error(error?.response?.data?.message || "Failed to update view count");
+    }
+  };
+  
+
   useEffect(() => {
     fetchComments();
     getLikes();
   }, []);
+
+  useEffect(()=>{
+    const id = setTimeout(() => {
+      viewsCount()
+    }, 80000);
+
+    return ()=>{
+      clearTimeout(id)
+    }
+  },[])
 
   return (
     <section className="container mx-auto pb-2">

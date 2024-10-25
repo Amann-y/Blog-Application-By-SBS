@@ -8,7 +8,8 @@ const {
   updateUserSpecificBlog,
   getBlogByCategory,
   likeABlog,
-  getAllLikes
+  getAllLikes,
+  view
 } = require("../Controllers/blog");
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.post("/user-blog/like/:id", checkUserAuth, likeABlog);
 router.put("/user-blog/:id", checkUserAuth, updateUserSpecificBlog);
 router.get("/blogs/:category", getBlogByCategory, likeABlog);
 router.get("/blog-likes/:postId", checkUserAuth,getAllLikes)
+router.put("/blog/views/:blogId",checkUserAuth,view)
 
 module.exports = router;

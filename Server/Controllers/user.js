@@ -148,7 +148,7 @@ const verifyEmail = async (req,res)=>{
 const loginUser = async (req, res) => {
   try {
     const { password, email, recaptchaValue } = req.body;
-    if (!password || !email || !recaptchaValue) {
+    if (!password || !email ) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
@@ -165,7 +165,7 @@ const loginUser = async (req, res) => {
     if(!existingUser.isVerified){
       return res.status(401).json({
         success: false,
-        message: "Your account is not verified",
+        message: "Your account is not verified, Please verify it first",
       });
     }
 
@@ -179,30 +179,45 @@ const loginUser = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid Credentials" });
     } else {
-      const output = await axios.post(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaValue}`
+      // const output = await axios.post(
+      //   `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaValue}`
+      // );
+      const token = await jwt.sign(
+        { userId: existingUser._id },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1d" }
       );
+      res.status(200).json({
+        success: true,
+        message: "User login successfully",
+        token,
+        userId: existingUser._id,
+        userName: existingUser.fullName,
+        userEmail: existingUser.email,
+        isAuth:true
+      });
 
-      if (output.data.success) {
-        const token = await jwt.sign(
-          { userId: existingUser._id },
-          process.env.JWT_SECRET_KEY,
-          { expiresIn: "1d" }
-        );
-        res.status(200).json({
-          success: true,
-          message: "User login successfully",
-          token,
-          userId: existingUser._id,
-          userName: existingUser.fullName,
-          userEmail: existingUser.email,
-          isAuth:true
-        });
-      } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "reCaptcha verification failed" });
-      }
+      // if (output.data.success) {
+      //   const token = await jwt.sign(
+      //     { userId: existingUser._id },
+      //     process.env.JWT_SECRET_KEY,
+      //     { expiresIn: "1d" }
+      //   );
+      //   res.status(200).json({
+      //     success: true,
+      //     message: "User login successfully",
+      //     token,
+      //     userId: existingUser._id,
+      //     userName: existingUser.fullName,
+      //     userEmail: existingUser.email,
+      //     isAuth:true
+      //   });
+      // } 
+      // else {
+      //   return res
+      //     .status(400)
+      //     .json({ success: false, message: "reCaptcha verification failed" });
+      // }
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
