@@ -68,9 +68,9 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="flex justify-center items-center my-2">
+    <div className="flex justify-center items-center my-2 mx-2">
       <div className="w-full max-w-xl p-4 bg-slate-200 rounded-lg shadow-lg">
-        <h2 className="text-xl dark:text-black md:text-2xl font-bold md:mb-6 text-center animate-bounce">
+        <h2 className="text-xl dark:text-black md:text-2xl font-bold md:mb-6 text-center animate__animated animate__slow animate__pulse animate__infinite">
           {location?.pathname === "/create-blog"
             ? "Create A Blog"
             : ""}
@@ -141,6 +141,7 @@ const CreateBlog = () => {
               ref={refDescription}
               className="mt-1 dark:text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               required
+              style={{'resize':'none'}}
             ></textarea>
           </div>
           <div className="flex items-center justify-between">

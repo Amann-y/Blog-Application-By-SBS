@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import "./App.css"
+import useOnlineNotification from './utils/useOnlineNotification';
+import OnlineNotification from './components/OnlineNotification/OnlineNotification';
 
 // Lazy-loaded components
 const Navbar = React.lazy(() => import('./components/navbar/Navbar'));
@@ -21,10 +23,18 @@ const ResetPassword = React.lazy(()=>import('./pages/ResetPassword'))
 const EmailVerification = React.lazy(()=>import('./pages/EmailValidation'))
 
 const App = () => {
+  const isOnline = useOnlineNotification()
+
+  if(!isOnline){
+    return <OnlineNotification/>
+  }
+
   return (
-    <div className="min-h-[100dvh] grid grid-rows-[auto_1fr_auto] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-w-fit ">
+    <div className="min-h-[100dvh] grid grid-rows-[auto_1fr_auto] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-w-fit">
       <Suspense
-        fallback={<div className="text-center text-xl min-h-screen">Loading...</div>}
+        fallback={  <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+        </div>}
       >
         <Navbar />
         <Routes>

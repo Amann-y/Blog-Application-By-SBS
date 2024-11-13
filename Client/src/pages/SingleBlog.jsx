@@ -162,7 +162,7 @@ const SingleBlog = () => {
   useEffect(()=>{
     const id = setTimeout(() => {
       viewsCount()
-    }, 80000);
+    }, 30000);
 
     return ()=>{
       clearTimeout(id)

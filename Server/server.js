@@ -38,7 +38,7 @@ app.use((err, req, res, next) => {
 });
 
 // connect Database
-connectDB(process.env.MONGODB_URL);
+connectDB(process.env.MONGODB_URL_ATLAS);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server Is Running On ${process.env.PORT}`);

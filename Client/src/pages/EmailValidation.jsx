@@ -36,7 +36,7 @@ const EmailVerification = () => {
        const response = await axios.post(`http://localhost:5500/api/v1/user/verify-email`,{
         email, otp
        })
-       console.log(response)
+    
        if(response?.data?.success){
         toast.success("Email has been verified")
         navigate("/login")
